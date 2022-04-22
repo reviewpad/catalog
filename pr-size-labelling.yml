@@ -1,0 +1,43 @@
+apiVersion: reviewpad.com/v0.0.3
+
+labels:
+  small:
+    description: small changes
+    # color is the hexadecimal color code for the label, without the leading #.
+    color: "294b69"
+  medium:
+    description: small changes
+    color: "a8c3f7"
+  large:
+    description: large changes
+    color: "8a2138"
+
+rules:
+  isSmall:
+    kind: patch
+    description: small pull request
+    spec: $size() <= 90
+  
+  isMedium:
+    kind: patch
+    description: medium-sized pull request
+    spec: $size() > 90 && $size() <= 300
+
+  isLarge:
+    kind: patch
+    description: large-sized pull request
+    spec: $size() > 300
+  
+protectionGates:
+  - name: label-pull-request-with-size
+    description: Label pull request with size
+    patchRules:
+      - rule: isSmall
+        extraActions:
+          - $addLabel("small")
+      - rule: isMedium
+        extraActions: 
+          - $addLabel("medium")
+      - rule: isLarge
+        extraActions: 
+          - $addLabel("large")

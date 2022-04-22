@@ -1,0 +1,21 @@
+apiVersion: reviewpad.com/v0.0.3
+
+labels:
+  critical:
+    description: critical changes
+    # color is the hexadecimal color code for the label, without the leading #.
+    color: fd5e53
+
+rules:
+  changesMainFile:
+    kind: patch
+    description: Patch contains changes to the main file
+    spec: $hasFileName("go/main.go")
+
+protectionGates:
+  - name: critical
+    description: Modifications of critical code require careful review
+    patchRules:
+      - rule: changesMainFile
+    actions:
+      - $addLabel("critical")

@@ -1,0 +1,67 @@
+apiVersion: reviewpad.com/v0.0.4
+
+labels:
+  budget:
+    description: Changes to budget component
+    # color is the hexadecimal color code for the label, without the leading #.
+    color: fd5e53
+  small:
+    description: Small changes
+    color: "294b69"
+  medium:
+    description: Medium changes
+    color: "a8c3f7"
+  large:
+    description: Large changes
+    color: "8a2138"
+
+rules:
+  isSmall:
+    kind: patch
+    description: Small pull request
+    spec: $size() <= 90
+  
+  isMedium:
+    kind: patch
+    description: Medium-sized pull request
+    spec: $size() > 90 && $size() <= 300
+
+  isLarge:
+    kind: patch
+    description: Large-sized pull request
+    spec: $size() > 300
+
+  changesBudget:
+    kind: patch
+    description: Patch contains changes to budget
+    spec: $hasFilePattern("**/budget/**")
+
+protectionGates:
+  - name: modifications-to-component
+    alwaysRun: true
+    description: Workflow on modification to components
+    patchRules:
+      - rule: changesBudget
+        extraActions:
+          - $addLabel("budget")
+          - $assignReviewer($team("X"), 1)
+
+  - name: label-with-size
+    alwaysRun: true
+    description: Label pull request with size
+    patchRules:
+      - rule: isSmall
+        extraActions:
+          - $removeLabel("medium")
+          - $removeLabel("large")
+          - $addLabel("small")
+      - rule: isMedium
+        extraActions:
+          - $removeLabel("small")
+          - $removeLabel("large")
+          - $addLabel("medium")
+      - rule: isLarge
+        extraActions:
+          - $removeLabel("small")
+          - $removeLabel("medium")
+          - $addLabel("large")

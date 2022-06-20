@@ -1,0 +1,17 @@
+api-version: reviewpad.com/v1.x
+
+mode: verbose
+
+rules:
+  tautology:
+    kind: patch
+    description: Always true
+    spec: 1 == 1
+
+workflows:
+  - name: say-hello
+    description: Say Hello World
+    if:
+      - rule: tautology
+        extra-actions:
+          - $comment("Hello World")

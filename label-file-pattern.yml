@@ -1,4 +1,4 @@
-apiVersion: reviewpad.com/v0.0.4
+api-version: reviewpad.com/v1.x
 
 labels:
   budget:
@@ -20,7 +20,7 @@ rules:
     kind: patch
     description: Small pull request
     spec: $size() <= 90
-  
+
   isMedium:
     kind: patch
     description: Medium-sized pull request
@@ -36,32 +36,32 @@ rules:
     description: Patch contains changes to budget
     spec: $hasFilePattern("**/budget/**")
 
-protectionGates:
+workflows:
   - name: modifications-to-component
-    alwaysRun: true
+    always-run: true
     description: Workflow on modification to components
-    patchRules:
+    if:
       - rule: changesBudget
-        extraActions:
+        extra-actions:
           - $addLabel("budget")
-          - $assignReviewer($team("X"), 1)
+          - $assignReviewer($team("devops"), 1)
 
   - name: label-with-size
-    alwaysRun: true
+    always-run: true
     description: Label pull request with size
-    patchRules:
+    if:
       - rule: isSmall
-        extraActions:
+        extra-actions:
           - $removeLabel("medium")
           - $removeLabel("large")
           - $addLabel("small")
       - rule: isMedium
-        extraActions:
+        extra-actions:
           - $removeLabel("small")
           - $removeLabel("large")
           - $addLabel("medium")
       - rule: isLarge
-        extraActions:
+        extra-actions:
           - $removeLabel("small")
           - $removeLabel("medium")
           - $addLabel("large")

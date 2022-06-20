@@ -1,4 +1,4 @@
-apiVersion: reviewpad.com/v0.0.4
+api-version: reviewpad.com/v1.x
 
 rules:
   changesTransactionsCode:
@@ -6,10 +6,10 @@ rules:
     description: Changes code in transactions
     spec: $hasFilePattern("src/transactions/**")
 
-protectionGates:
+workflows:
   - name: ask
     description: Ask 3 developers for review
-    patchRules:
+    if:
       - rule: changesTransactionsCode
-    actions:
-      - $assignReviewer($allDevs(), 3)
+    then:
+      - $assignReviewer($organization(), 3)

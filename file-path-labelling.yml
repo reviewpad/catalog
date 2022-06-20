@@ -1,4 +1,4 @@
-apiVersion: reviewpad.com/v0.0.3
+api-version: reviewpad.com/v1.x
 
 labels:
   critical:
@@ -12,10 +12,10 @@ rules:
     description: Patch contains changes to the main file
     spec: $hasFileName("go/main.go")
 
-protectionGates:
+workflows:
   - name: critical
     description: Modifications of critical code require careful review
-    patchRules:
+    if:
       - rule: changesMainFile
-    actions:
+    then:
       - $addLabel("critical")
